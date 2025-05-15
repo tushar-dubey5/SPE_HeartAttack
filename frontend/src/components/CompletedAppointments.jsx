@@ -7,7 +7,7 @@ const CompletedAppointments = ({ doctorId }) => {
 
   useEffect(() => {
     if (doctorId) {
-      API.get(`/api/appointments/doctor/${doctorId}?status=COMPLETED`)
+      API.get(`appointments/doctor/${doctorId}?status=COMPLETED`)
         .then(res => {
           console.log('Completed appointments:', res.data);
           setCompletedData(res.data);

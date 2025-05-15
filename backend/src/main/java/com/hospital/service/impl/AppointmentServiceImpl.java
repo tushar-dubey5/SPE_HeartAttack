@@ -89,11 +89,18 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public List<AppointmentResponse> getDoctorAppointments(Long doctorId) {
+    public List<AppointmentResponse> getDoctorAppointments(Long doctorId, Appointment.AppointmentStatus status) {
         Doctor doctor = doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ResourceNotFoundException("Doctor", "id", doctorId));
 
-        return appointmentRepository.findByDoctor(doctor).stream()
+        List<Appointment> appointments;
+        if (status != null) {
+            appointments = appointmentRepository.findByDoctorAndStatus(doctor, status);
+        } else {
+            appointments = appointmentRepository.findByDoctor(doctor);
+        }
+
+        return appointments.stream()
                 .map(AppointmentResponse::fromAppointment)
                 .collect(Collectors.toList());
     }

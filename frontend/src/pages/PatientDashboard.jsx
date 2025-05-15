@@ -11,6 +11,28 @@ export default function PatientDashboard() {
 
   const navigate = useNavigate();
   const patientId = localStorage.getItem("patientId");
+  const doctorId = localStorage.getItem("doctorId");
+  const token = localStorage.getItem("token");
+
+  // Add role-based redirection
+  useEffect(() => {
+    if (!token) {
+      navigate('/');
+      return;
+    }
+
+    // If user is a doctor, redirect to doctor dashboard
+    if (doctorId) {
+      navigate('/doctor/dashboard');
+      return;
+    }
+
+    // If user is not a patient, redirect to home
+    if (!patientId) {
+      navigate('/');
+      return;
+    }
+  }, [token, patientId, doctorId, navigate]);
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -29,10 +51,11 @@ export default function PatientDashboard() {
       }
     };
 
-    if (patientId) {
+    // Only fetch if we have a patientId and not a doctorId
+    if (patientId && !doctorId) {
       fetchAppointments();
     }
-  }, [patientId]);
+  }, [patientId, doctorId]);
 
   if (loading) {
     return (

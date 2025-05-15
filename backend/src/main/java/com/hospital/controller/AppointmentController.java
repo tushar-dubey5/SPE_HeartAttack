@@ -78,11 +78,12 @@ public class AppointmentController {
     }
 
     @GetMapping("/doctor/{doctorId}")
-    @Operation(summary = "Get doctor's appointments", description = "Retrieve all appointments for a specific doctor")
+    @Operation(summary = "Get doctor's appointments", description = "Retrieve all appointments for a specific doctor, optionally filtered by status")
     @PreAuthorize("hasRole('DOCTOR') and @appointmentSecurity.isCurrentDoctor(authentication, #doctorId)")
     public ResponseEntity<List<AppointmentResponse>> getDoctorAppointments(
-            @Parameter(description = "Doctor ID") @PathVariable Long doctorId) {
-        return ResponseEntity.ok(appointmentService.getDoctorAppointments(doctorId));
+            @Parameter(description = "Doctor ID") @PathVariable Long doctorId,
+            @Parameter(description = "Filter by appointment status") @RequestParam(required = false) AppointmentStatus status) {
+        return ResponseEntity.ok(appointmentService.getDoctorAppointments(doctorId, status));
     }
 
     @GetMapping("/patient/{patientId}")

@@ -30,8 +30,8 @@ export default function LoginForm() {
       const token = `${res.data.tokenType} ${res.data.token}`;
       console.log('Storing token:', token);
       localStorage.setItem('token', token);
-      
-      if (role === 'DOCTOR') {
+      console.log(role);
+      if (role.toUpperCase() === 'DOCTOR') {
         localStorage.setItem('doctorId', res.data.doctorId);
         navigate('/doctor/dashboard');
       } else {

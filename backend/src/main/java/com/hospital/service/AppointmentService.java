@@ -11,7 +11,7 @@ public interface AppointmentService {
     AppointmentResponse createAppointment(AppointmentRequest request);
     AppointmentResponse updateAppointmentStatus(Long id, Appointment.AppointmentStatus status);
     AppointmentResponse getAppointment(Long id);
-    List<AppointmentResponse> getDoctorAppointments(Long doctorId);
+    List<AppointmentResponse> getDoctorAppointments(Long doctorId, Appointment.AppointmentStatus status);
     List<AppointmentResponse> getPatientAppointments(Long patientId);
     List<AppointmentResponse> getDoctorAppointmentsByDateRange(Long doctorId, LocalDateTime start, LocalDateTime end);
     List<AppointmentResponse> getPatientAppointmentsByDateRange(Long patientId, LocalDateTime start, LocalDateTime end);

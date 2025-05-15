@@ -6,29 +6,75 @@ import { useNavigate } from 'react-router-dom';
 
 const BookedAppointments = () => {
   const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
   const patientId = localStorage.getItem('patientId');
+  const doctorId = localStorage.getItem('doctorId');
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Redirect logic
     if (!token) {
-      navigate("/")
-    } else if (!patientId) {
-      navigate("/doctor/dashboard");
+      navigate("/");
+      return;
     }
-  }, [token, patientId, navigate]);
+    
+    // If user is a doctor, redirect to doctor dashboard
+    if (doctorId) {
+      navigate("/doctor/dashboard");
+      return;
+    }
+    
+    // If user is neither a patient nor a doctor, redirect to home
+    if (!patientId) {
+      navigate("/");
+      return;
+    }
+  }, [token, patientId, doctorId, navigate]);
 
   useEffect(() => {
-    if (patientId) {
+    // Only fetch appointments if we have a patientId
+    if (patientId && !doctorId) {
+      setLoading(true);
       API.get(`/appointments/patient/${patientId}`)
         .then(res => {
-          // Filter pending appointments on the frontend if needed
-          const pendingAppointments = res.data.filter(app => app.status === 'SCHEDULED' || app.status === 'CONFIRMED');
+          const pendingAppointments = res.data.filter(app => 
+            app.status === 'SCHEDULED' || app.status === 'CONFIRMED'
+          );
           setAppointments(pendingAppointments);
+          setLoading(false);
         })
-        .catch(err => console.error('Error fetching appointments:', err));
+        .catch(err => {
+          console.error('Error fetching appointments:', err);
+          setError('Failed to load appointments. Please try again later.');
+          setLoading(false);
+        });
     }
-  }, [patientId]);
+  }, [patientId, doctorId]);
+
+  if (loading) {
+    return (
+      <>
+        <Navbar />
+        <div className="max-w-4xl mx-auto p-6 complete-padding">
+          <p className="text-center">Loading appointments...</p>
+        </div>
+      </>
+    );
+  }
+
+  if (error) {
+    return (
+      <>
+        <Navbar />
+        <div className="max-w-4xl mx-auto p-6 complete-padding">
+          <p className="text-center text-red-600">{error}</p>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

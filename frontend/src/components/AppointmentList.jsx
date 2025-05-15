@@ -4,7 +4,7 @@ const AppointmentList = ({ appointments }) => {
   const navigate = useNavigate();
 
   // Filter only pending appointments
-  const pendingAppointments = appointments.filter(appt => appt.status === 'Pending');
+  const pendingAppointments = appointments.filter(appt => appt.status === 'SCHEDULED');
 
   return (
     <div className="mt-6">
@@ -24,7 +24,7 @@ const AppointmentList = ({ appointments }) => {
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                   <div className="mb-2 md:mb-0">
                     <h4 className="text-lg font-bold text-blue-700">
-                      {appt.patientId?.name || 'Unknown Patient'}
+                      {appt.patientName || 'Unknown Patient'}
                     </h4>
                     <p className="text-sm text-gray-600">
                       {new Date(appt.date).toLocaleString()}

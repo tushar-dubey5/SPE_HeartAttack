@@ -25,7 +25,7 @@ const DoctorDashboard = () => {
 
   useEffect(() => {
     if (!showCompleted && doctorId) {
-      API.get(`/api/appointments/doctor/${doctorId}`)
+      API.get(`/appointments/doctor/${doctorId}`)
         .then(res => {
           console.log('Appointments response:', res.data);
           setAppointments(res.data);
