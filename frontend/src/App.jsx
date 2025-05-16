@@ -84,7 +84,7 @@ function App() {
           }
         />
         <Route
-          path="/doctor/patient/:patientId/report"
+          path="/doctor/appointment/:appointmentId/report"
           element={
             <ProtectedRoute requiredRole="DOCTOR">
               <ReportFormPage />

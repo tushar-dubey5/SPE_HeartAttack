@@ -15,11 +15,10 @@ const AppointmentList = ({ appointments }) => {
       ) : (
         <ul className="space-y-4">
           {pendingAppointments.map((appt) => (
-            <li key={appt._id}>
+            <li key={appt.id}>
               <div style={{cursor: 'pointer' }}
                  className="bg-white border rounded-lg shadow hover:shadow-lg hover:bg-gray-50 transition duration-200 ease-in-out p-5 cursor-pointer"
-
-                onClick={() => appt.patientId && navigate(`/doctor/patient/${appt.patientId._id}`)}
+                onClick={() => navigate(`/doctor/patient/${appt.patientId}`)}
               >
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
                   <div className="mb-2 md:mb-0">

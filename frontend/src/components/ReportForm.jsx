@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import API from '../services/api';
 import { useNavigate } from 'react-router-dom';
 
-const ReportForm = ({ patientId, doctorId, appointmentId }) => {
+const ReportForm = ({ appointmentId }) => {
   const [diagnosis, setDiagnosis] = useState('');
   const [riskLevel, setRiskLevel] = useState('LOW');
   const [recommendedTests, setRecommendedTests] = useState('');
@@ -18,10 +18,10 @@ const ReportForm = ({ patientId, doctorId, appointmentId }) => {
     
     try {
       // First, update the appointment status to COMPLETED
-      await API.put(`/api/appointments/${appointmentId}/status?status=COMPLETED`);
+      await API.put(`/appointments/${appointmentId}/status?status=COMPLETED`);
       
       // Then create the report
-      await API.post('/api/reports', {
+      await API.post('/reports', {
         appointmentId,
         diagnosis,
         riskLevel,
