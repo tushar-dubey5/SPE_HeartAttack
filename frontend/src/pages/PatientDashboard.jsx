@@ -115,9 +115,9 @@ export default function PatientDashboard() {
                   <strong>Reason:</strong> {appt.reason}
                 </p>
               
-                {appt.report ? (
+                {appt.status === 'COMPLETED' ? (
                   <button
-                    onClick={() => navigate(`/patient/report/${appt.report.id}`)}
+                    onClick={() => navigate(`/reports/${appt.id}`)}
                     className="mt-2 bg-black hover:bg-blue-700 text-white text-sm px-4 py-2 rounded"
                   >
                     📄 View Report

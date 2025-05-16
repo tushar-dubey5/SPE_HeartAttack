@@ -155,4 +155,16 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointment.setStatus(Appointment.AppointmentStatus.CANCELLED);
         appointmentRepository.save(appointment);
     }
+    @Override
+    public AppointmentResponse getPatientNextAppointment(Long patientId) {
+        Patient patient = patientRepository.findById(patientId)
+                .orElseThrow(() -> new ResourceNotFoundException("Patient", "id", patientId));
+
+        Appointment appointment = appointmentRepository.findFirstByPatientAndDateAfterOrderByDateAsc(patient, LocalDateTime.now())
+                .orElseThrow(() -> new ResourceNotFoundException("Appointment", "next appointment for patient", patientId));
+
+        return AppointmentResponse.fromAppointment(appointment);
+    }
+
+
 } 

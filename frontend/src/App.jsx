@@ -14,6 +14,7 @@ import RegisterPatientForm from './components/RegisterPatientForm';
 import BookedAppointments from './pages/BookedAppointments';
 import PatientReport from './pages/PatientReport';
 import ProtectedRoute from './components/ProtectedRoute';
+import ReportDetails from './pages/ReportDetails';
 
 function App() {
   return (
@@ -23,7 +24,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login/:role" element={<LoginForm />} />
         <Route path="/register/patient" element={<RegisterPatientForm />} />
-
+        <Route path="/reports/:id" element={<ReportDetails />} />
         {/* Protected Patient routes */}
         <Route
           path="/patient/dashboard"

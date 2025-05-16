@@ -114,6 +114,14 @@ public class AppointmentController {
         return ResponseEntity.ok(appointmentService.getPatientAppointmentsByDateRange(patientId, start, end));
     }
 
+    @GetMapping("/patient/{patientId}/next")
+    @Operation(summary = "Get patient's next appointment", description = "Retrieve the next scheduled appointment for a specific patient")
+    @PreAuthorize("hasRole('PATIENT') and @appointmentSecurity.isCurrentPatient(authentication, #patientId)")
+    public ResponseEntity<AppointmentResponse> getPatientNextAppointment(
+            @Parameter(description = "Patient ID") @PathVariable Long patientId) {
+        return ResponseEntity.ok(appointmentService.getPatientNextAppointment(patientId));
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Cancel appointment", description = "Cancel an existing appointment")
     @ApiResponses(value = {

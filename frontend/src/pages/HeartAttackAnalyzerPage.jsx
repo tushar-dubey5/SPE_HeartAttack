@@ -76,14 +76,28 @@ const HeartAttackAnalyzerPage = () => {
     }
   };
 
-  const handleCreateReport = () => {
+  const handleCreateReport = async () => {
     if (result) {
-      navigate(`/doctor/appointment/${patientId}/report`, {
-        state: {
-          diagnosis: result.diagnosis,
-          riskLevel: result.riskLevel
+      try {
+        // Fetch the next scheduled appointment for this patient
+        const response = await API.get(`/appointments/patient/${patientId}/next`);
+        const nextAppointmentId = response.data.id;
+        
+        if (!nextAppointmentId) {
+          setError('No upcoming appointments found for this patient. Please schedule an appointment first.');
+          return;
         }
-      });
+
+        navigate(`/doctor/appointment/${nextAppointmentId}/report`, {
+          state: {
+            diagnosis: result.diagnosis,
+            riskLevel: result.riskLevel
+          }
+        });
+      } catch (err) {
+        console.error('Error fetching next appointment:', err);
+        setError('Failed to create report. Please ensure the patient has an upcoming appointment.');
+      }
     }
   };
 

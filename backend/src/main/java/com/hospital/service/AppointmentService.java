@@ -3,6 +3,7 @@ package com.hospital.service;
 import com.hospital.dto.AppointmentRequest;
 import com.hospital.dto.AppointmentResponse;
 import com.hospital.model.Appointment;
+import com.hospital.exception.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,4 +17,5 @@ public interface AppointmentService {
     List<AppointmentResponse> getDoctorAppointmentsByDateRange(Long doctorId, LocalDateTime start, LocalDateTime end);
     List<AppointmentResponse> getPatientAppointmentsByDateRange(Long patientId, LocalDateTime start, LocalDateTime end);
     void cancelAppointment(Long id);
+    AppointmentResponse getPatientNextAppointment(Long patientId);
 } 

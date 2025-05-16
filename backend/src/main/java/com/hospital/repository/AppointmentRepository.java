@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Long> {
@@ -31,4 +32,9 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Long> 
     
     @Query("SELECT a FROM Appointment a WHERE a.patient = :patient AND a.date >= :now ORDER BY a.date ASC")
     List<Appointment> findPatientUpcomingAppointments(@Param("patient") Patient patient, @Param("now") LocalDateTime now);
+
+    List<Appointment> findByPatientIdAndDateBetweenOrderByDateAsc(Long patientId, LocalDateTime start, LocalDateTime end);
+    List<Appointment> findByPatientIdAndDateAfterOrderByDateAsc(Long patientId, LocalDateTime date);
+    Optional<Appointment> findFirstByPatientAndDateAfterOrderByDateAsc(Patient patient, LocalDateTime now);
+
 } 
