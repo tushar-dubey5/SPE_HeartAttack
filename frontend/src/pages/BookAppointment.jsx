@@ -37,17 +37,30 @@ const BookAppointment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate reason length
+    if (reason.length < 10) {
+      setError('Reason must be at least 10 characters long');
+      return;
+    }
+    
     try {
       await API.post('/appointments', {
-        patientId,
-        doctorId,
-        date,
+        patientId: parseInt(patientId), // Convert string to number
+        doctorId: parseInt(doctorId),   // Convert string to number
+        date: new Date(date).toISOString(), // Ensure proper ISO format
         reason,
       });
       navigate('/patient/dashboard');
     } catch (err) {
       console.error('Error booking appointment:', err);
-      setError(err.response?.data?.message || 'Error booking appointment. Please try again.');
+      if (err.response?.data?.message) {
+        setError(err.response.data.message);
+      } else if (err.response?.status === 400) {
+        setError('Please check all fields are filled correctly. Reason must be at least 10 characters.');
+      } else {
+        setError('Error booking appointment. Please try again.');
+      }
     }
   };
 
@@ -99,16 +112,25 @@ const BookAppointment = () => {
 
             {/* Reason TextArea */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Reason for Appointment</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Reason for Appointment <span className="text-xs text-gray-500">(minimum 10 characters)</span>
+              </label>
               <br/>
               <textarea
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 rows={4}
-                className="block w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                placeholder="Briefly describe your symptoms or reason for visit..."
+                className={`block w-full border ${
+                  reason.length < 10 && reason.length > 0 ? 'border-red-300' : 'border-gray-300'
+                } rounded-lg px-4 py-2 text-gray-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500`}
+                placeholder="Briefly describe your symptoms or reason for visit (minimum 10 characters)..."
                 required
               />
+              {reason.length < 10 && reason.length > 0 && (
+                <p className="mt-1 text-sm text-red-600">
+                  Please enter at least {10 - reason.length} more character{10 - reason.length === 1 ? '' : 's'}
+                </p>
+              )}
             </div>
 
             {/* Submit Button */}
