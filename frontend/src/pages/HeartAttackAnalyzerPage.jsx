@@ -117,9 +117,11 @@ const HeartAttackAnalyzerPage = () => {
           {result && (
             <div className="result-card">
               <h3>Analysis Results</h3>
-              <p><strong>Risk Level:</strong> {result.riskLevel}</p>
-              <p><strong>Risk Score:</strong> {(result.riskScore * 100).toFixed(2)}%</p>
-              <p><strong>Diagnosis:</strong> {result.diagnosis}</p>
+              <p><strong>Risk Level:</strong> {result.risk_level}</p>
+              <p><strong>Risk Score:</strong> {(result.risk_score * 100).toFixed(2)}%</p>
+              <p><strong>Diagnosis:</strong> {result.risk_level === 'HIGH' ? 
+                'Patient shows high risk of heart attack. Immediate medical attention and lifestyle changes are recommended.' :
+                'Patient shows low risk of heart attack. Continue monitoring and maintain healthy lifestyle.'}</p>
               {/* <button onClick={handleCreateReport} className="create-report-btn">
                 Create Report with These Results
               </button> */}

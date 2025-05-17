@@ -1,0 +1,5 @@
+outs:
+- md5: 1cc8ecc4b0b4bbd3a1c27d89832e49e4
+  size: 102172
+  hash: md5
+  path: heart_attack_model_20250518_014645.pkl
