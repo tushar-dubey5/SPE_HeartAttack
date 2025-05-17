@@ -271,6 +271,7 @@ const HeartAttackAnalyzerPage = () => {
                   <option value="1">1</option>
                   <option value="2">2</option>
                   <option value="3">3</option>
+                  <option value="4">4</option>
                 </select>
               </div>
 
@@ -281,9 +282,10 @@ const HeartAttackAnalyzerPage = () => {
                   value={formData.thall}
                   onChange={handleInputChange}
                 >
-                  <option value="3">Normal</option>
-                  <option value="6">Fixed Defect</option>
-                  <option value="7">Reversible Defect</option>
+                   <option value="0">No Thalassemia</option>
+                  <option value="1">Mild</option>
+                  <option value="2">Moderate</option>
+                  <option value="3">Severe</option>
                 </select>
               </div>
             </div>
