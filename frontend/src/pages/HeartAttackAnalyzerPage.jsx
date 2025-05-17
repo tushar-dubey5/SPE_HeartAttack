@@ -120,9 +120,9 @@ const HeartAttackAnalyzerPage = () => {
               <p><strong>Risk Level:</strong> {result.riskLevel}</p>
               <p><strong>Risk Score:</strong> {(result.riskScore * 100).toFixed(2)}%</p>
               <p><strong>Diagnosis:</strong> {result.diagnosis}</p>
-              <button onClick={handleCreateReport} className="create-report-btn">
+              {/* <button onClick={handleCreateReport} className="create-report-btn">
                 Create Report with These Results
-              </button>
+              </button> */}
             </div>
           )}
 

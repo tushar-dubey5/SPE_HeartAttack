@@ -44,7 +44,6 @@ com/hospital/model/Report$ReportBuilder.class
 com/hospital/model/Doctor.class
 com/hospital/dto/ErrorResponse.class
 com/hospital/config/DatabaseSeeder.class
-com/hospital/dto/AppointmentRequest$AppointmentRequestBuilder.class
 com/hospital/dto/RegisterRequest.class
 com/hospital/HospitalManagementApplication.class
 com/hospital/security/CustomUserDetailsService.class
