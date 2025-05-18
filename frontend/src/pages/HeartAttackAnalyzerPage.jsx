@@ -284,10 +284,9 @@ const HeartAttackAnalyzerPage = () => {
                   value={formData.thall}
                   onChange={handleInputChange}
                 >
-                   <option value="0">No Thalassemia</option>
-                  <option value="1">Mild</option>
-                  <option value="2">Moderate</option>
-                  <option value="3">Severe</option>
+                  <option value="0">Normal</option>
+                  <option value="1">Fixed Defect</option>
+                  <option value="2">Reversible Defect</option>
                 </select>
               </div>
             </div>

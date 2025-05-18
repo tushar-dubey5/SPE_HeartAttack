@@ -1,0 +1,150 @@
+pipeline {
+    agent any
+    
+    environment {
+        PREDICTION_SERVICE_DIR = 'prediction_service'
+        VENV_NAME = 'venv'
+        MYSQL_CREDS = credentials('mysql-credentials')
+        MIN_DATA_SIZE = '30'
+    }
+    
+    stages {
+        stage('Setup Python Environment') {
+            steps {
+                dir(PREDICTION_SERVICE_DIR) {
+                    sh '''
+                        python3 -m venv ${VENV_NAME}
+                        . ${VENV_NAME}/bin/activate
+                        pip install -r requirements.txt
+                    '''
+                }
+            }
+        }
+
+        stage('Check Data Size') {
+            steps {
+                dir(PREDICTION_SERVICE_DIR) {
+                    script {
+                        def dataSize = sh(
+                            script: '''
+                                . ${VENV_NAME}/bin/activate
+                                python3 -c "from database import get_training_data; print(len(get_training_data()))"
+                            ''',
+                            returnStdout: true
+                        ).trim()
+                        
+                        echo "Current training data size: ${dataSize}"
+                        
+                        if (dataSize.toInteger() < env.MIN_DATA_SIZE.toInteger()) {
+                            currentBuild.result = 'ABORTED'
+                            error("Insufficient training data. Need at least ${env.MIN_DATA_SIZE} records, but only have ${dataSize}.")
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                dir(PREDICTION_SERVICE_DIR) {
+                    sh '''
+                        . ${VENV_NAME}/bin/activate
+                        # Run the test suite
+                        python3 test_api.py
+                        python3 test_prediction_storage.py
+                        python3 test_model_retraining.py
+                    '''
+                }
+            }
+        }
+        
+        stage('Model Evaluation & Retraining') {
+            steps {
+                dir(PREDICTION_SERVICE_DIR) {
+                    sh '''
+                        . ${VENV_NAME}/bin/activate
+                        
+                        # Generate synthetic data for testing
+                        python3 generate_synthetic_data.py
+                        
+                        # Attempt model retraining
+                        python3 model_retraining.py
+                    '''
+                }
+            }
+        }
+        
+        stage('DVC Operations') {
+            steps {
+                dir(PREDICTION_SERVICE_DIR) {
+                    sh '''
+                        . ${VENV_NAME}/bin/activate
+                        
+                        # Initialize DVC if not already initialized
+                        if [ ! -d ".dvc" ]; then
+                            dvc init
+                        fi
+                        
+                        # Add and push model files
+                        dvc add models/*.pkl
+                        dvc push
+                        
+                        # Commit DVC changes
+                        git add .dvc/config models/*.dvc
+                        git commit -m "Update model artifacts via Jenkins pipeline" || true
+                    '''
+                }
+            }
+        }
+        
+        stage('Deploy to Production') {
+            steps {
+                dir(PREDICTION_SERVICE_DIR) {
+                    sh '''
+                        # Check if Flask app is running
+                        if pgrep -f "python3.*app.py" > /dev/null; then
+                            echo "Stopping existing Flask application..."
+                            pkill -f "python3.*app.py"
+                        fi
+                        
+                        # Start Flask app in background
+                        . ${VENV_NAME}/bin/activate
+                        nohup python3 app.py > app.log 2>&1 &
+                        
+                        # Wait for app to start
+                        sleep 5
+                        
+                        # Check if app is running
+                        if curl -s http://localhost:5000/health > /dev/null; then
+                            echo "Flask application successfully deployed"
+                        else
+                            echo "Failed to deploy Flask application"
+                            exit 1
+                        fi
+                    '''
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed! Check logs for details.'
+        }
+        aborted {
+            echo 'Pipeline aborted due to insufficient training data.'
+        }
+        always {
+            dir(PREDICTION_SERVICE_DIR) {
+                // Clean up virtual environment
+                sh 'rm -rf ${VENV_NAME}'
+                
+                // Archive logs
+                archiveArtifacts artifacts: 'app.log', allowEmptyArchive: true
+            }
+        }
+    }
+} 
